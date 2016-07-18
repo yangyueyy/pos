@@ -3,6 +3,7 @@
 describe('pos', () => {
   let inputs;
 
+
   beforeEach(() => {
     inputs = [
       'ITEM000001',
@@ -34,10 +35,12 @@ describe('pos', () => {
 
     expect(console.log).toHaveBeenCalledWith(expectText);
   });
+
   it('print items', () => {
 
-    var countItems = buildItems(inputs);
-
+    var allItems=loadAllItems();
+    var countItems = buildItems(inputs,allItems);
+    
     const correctItems = [
       {
         item: {

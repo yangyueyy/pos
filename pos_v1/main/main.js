@@ -1,62 +1,23 @@
 'use strict';
-function printReceipt(inputs){
-  let items=buildItems(inputs);
+let buildItems=(inputs,allItems)=>{
+  const cartItems=[];
 
-  return items;
-}
+  for(let input of inputs){
+    const splittedInput=input.split('-');
+    const barcode=splittedInput[0];
+    const count = parseFloat(splittedInput[1] || 1);
 
-function buildItems(inputs){
-  let cartItems=[];
-  const exinputs=changeInputs(inputs);
-  const allItems=loadAllItems();
-  let i;
+    const cartItem=cartItems.find(cartItem => cartItem.item.barcode === barcode);
 
-  for(i=0;i<exinputs.length;i++){
-    allItems.forEach(function(item){
-      if(exinputs[i]===item.barcode){
-        let cartItem=isexit(cartItems,exinputs[i]);
+    if(cartItem){
+      cartItem.count++;
+    }
+    else{
+      const item = allItems.find(item => item.barcode === barcode);
 
-        if(cartItem){
-          cartItem.count++;
-        }
-          else{
-          cartItems.push({item:item,count:1});
-          }
-        }
-    });
+      cartItems.push({item: item,count: count});
+    }
   }
 
   return cartItems;
-}
-
-function isexit(cartItems,barcode){
-  let flag;
-
-  cartItems.forEach(function (cartItem){
-    if(cartItem.item.barcode===barcode){
-      flag=cartItem;
-    }
-  });
-
-  return flag;
-}
-
-function changeInputs(inputs){
-  let i;
-  let exinputs=[];
-
-  for(i=0;i<inputs.length;i++){
-    if(inputs[i].match('-')){
-      let num=inputs[i].substring(11);
-      while(num>0){
-        exinputs.push(inputs[i].substring(0,10));
-        num--;
-      }
-    }
-    else{
-      exinputs.push(inputs[i]);
-    }
-  }
-
-  return exinputs;
 }
