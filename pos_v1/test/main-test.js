@@ -1,8 +1,6 @@
 'use strict';
-
 describe('pos', () => {
   let inputs;
-
 
   beforeEach(() => {
     inputs = [
@@ -36,11 +34,10 @@ describe('pos', () => {
     expect(console.log).toHaveBeenCalledWith(expectText);
   });
 
-  it('print items', () => {
+  it('print cartItems', () => {
+    const allItems = loadAllItems();
+    const countItems = buildItems(inputs, allItems);
 
-    var allItems=loadAllItems();
-    var countItems = buildItems(inputs,allItems);
-    
     const correctItems = [
       {
         item: {
@@ -72,4 +69,56 @@ describe('pos', () => {
     ];
     expect(countItems).toEqual(correctItems);
   });
+
+  it('print subCartItems', ()=> {
+    const allItems = loadAllItems();
+    const countItems = buildItems(inputs, allItems);
+    const promotions = loadPromotions();
+    const subCartItems = buildSubCartItems(countItems,promotions);
+
+
+    const expectSubCartItems = [
+      {
+        cartItem: {
+          item: {
+            barcode: 'ITEM000001',
+            name: '雪碧',
+            unit: '瓶',
+            price: 3.00
+          },
+          count: 5
+        },
+        subTotal: 12.00,
+        saveSubTotal: 3.00
+      },
+      {
+        cartItem: {
+          item: {
+            barcode: 'ITEM000003',
+            name: '荔枝',
+            unit: '斤',
+            price: 15.00
+          },
+          count: 2
+        },
+        subTotal: 30.00,
+        saveSubTotal: 0.00
+      },
+      {
+        cartItem: {
+          item: {
+            barcode: 'ITEM000005',
+            name: '方便面',
+            unit: '袋',
+            price: 4.50
+          },
+          count: 3
+        },
+        subTotal: 9.00,
+        saveSubTotal: 4.50
+      }
+    ];
+    expect(subCartItems).toEqual(expectSubCartItems);
+  });
+
 });
