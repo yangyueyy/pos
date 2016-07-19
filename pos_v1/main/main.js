@@ -1,10 +1,4 @@
 'use strict';
-let printReceipt = (inputs) => {
-  let cartItems = buildItems(inputs, allItems);
-  let subCartItems = buildSubCartItems(cartItems, promotions);
-
-  return subCartItems;
-};
 let buildItems = (inputs, allItems) => {
   let cartItems = [];
   for (let input of inputs) {
@@ -21,32 +15,32 @@ let buildItems = (inputs, allItems) => {
       cartItems.push({item: item, count: count});
     }
   }
-  
+
   return cartItems;
 };
 
-let buildSubCartItems = (cartItems, promotions) => {
-  let subCartItems = [];
-  let existPromotion;
-  for (let cartItem of cartItems) {
-    let barcode = cartItem.item.barcode;
-    let saveSubTotal;
-    let subTotal;
-    for (let i = 0; i < promotions[0].barcodes.length; i++) {
-      if (promotions[0].barcodes[i] === barcode) {
-        existPromotion = true;
-      }
-    }
-    if (existPromotion) {
-      saveSubTotal = parseInt(cartItem.count / 3) * cartItem.item.price;
-      subTotal = cartItem.count * cartItem.item.price - saveSubTotal;
-    }
-    else {
-      saveSubTotal = 0.00;
-      subTotal = cartItem.count * cartItem.item.price;
-    }
-    subCartItems.push({cartItem: cartItem, subTotal: parseFloat(subTotal), saveSubTotal: parseFloat(saveSubTotal)});
-  }
+let buildSubCartItems = (cartItems,promotions) => {
+  return cartItems.map(cartItem =>{
+    let promotionType = getPromotionType(cartItem.item.barcode,promotions);
+    let {saveSubTotal,subTotal} = discount(cartItem,promotionType);
 
-  return subCartItems;
+    return {cartItem,saveSubTotal,subTotal};
+  })
 };
+
+let getPromotionType = (barcode,promotions) => {
+  let promotion =  promotions.find(promotion => promotion.barcodes.includes(barcode));
+  return promotion ? promotion.type : '';
+};
+
+let discount=(cartItem,promotionType) => {
+  let freeItemCount = 0;
+  if(promotionType === 'BUY_TWO_GET_ONE_FREE'){
+    freeItemCount = parseInt(cartItem.count / 3);
+  }
+  let saveSubTotal = freeItemCount * cartItem.item.price;
+  let subTotal = cartItem.item.price * cartItem.count-saveSubTotal;
+
+  return {saveSubTotal,subTotal};
+};
+

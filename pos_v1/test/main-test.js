@@ -1,6 +1,8 @@
 'use strict';
 describe('pos', () => {
   let inputs;
+  const allItems = loadAllItems();
+  const promotions = loadPromotions();
 
   beforeEach(() => {
     inputs = [
@@ -35,7 +37,7 @@ describe('pos', () => {
   });
 
   it('print cartItems', () => {
-    const allItems = loadAllItems();
+
     const countItems = buildItems(inputs, allItems);
 
     const correctItems = [
@@ -71,9 +73,7 @@ describe('pos', () => {
   });
 
   it('print subCartItems', ()=> {
-    const allItems = loadAllItems();
     const countItems = buildItems(inputs, allItems);
-    const promotions = loadPromotions();
     const subCartItems = buildSubCartItems(countItems,promotions);
 
 
@@ -88,8 +88,8 @@ describe('pos', () => {
           },
           count: 5
         },
-        subTotal: 12.00,
-        saveSubTotal: 3.00
+        subTotal: 12,
+        saveSubTotal: 3
       },
       {
         cartItem: {
@@ -97,12 +97,12 @@ describe('pos', () => {
             barcode: 'ITEM000003',
             name: '荔枝',
             unit: '斤',
-            price: 15.00
+            price: 15.
           },
           count: 2
         },
-        subTotal: 30.00,
-        saveSubTotal: 0.00
+        subTotal: 30,
+        saveSubTotal: 0
       },
       {
         cartItem: {
@@ -114,8 +114,8 @@ describe('pos', () => {
           },
           count: 3
         },
-        subTotal: 9.00,
-        saveSubTotal: 4.50
+        subTotal: 9,
+        saveSubTotal: 4.5
       }
     ];
     expect(subCartItems).toEqual(expectSubCartItems);
