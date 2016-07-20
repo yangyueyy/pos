@@ -19,11 +19,11 @@ let buildItems = (inputs, allItems) => {
 
     let cartItem = cartItems.find(cartItem => cartItem.item.barcode === barcode);
     if (cartItem) {
-      cartItem.count++;
+      cartItem.count += count ;
     }
     else {
       let item = allItems.find(item => item.barcode === barcode);
-      cartItems.push({item: item, count: count});
+      cartItems.push({item, count});
     }
   }
 
@@ -41,7 +41,7 @@ let buildSubCartItems = (cartItems, promotions) => {
 
 let getPromotionType = (barcode, promotions) => {
   let promotion = promotions.find(promotion => promotion.barcodes.includes(barcode));
-  return promotion ? promotion.type : '';
+  return promotion ? promotion.type : undefined;
 };
 
 let discount = (cartItem, promotionType) => {
@@ -72,16 +72,21 @@ let printReceiptText = (receiptItems) => {
   return `***<没钱赚商店>收据***
 ${textString}
 ----------------------
-总计：${receiptItems.total.toFixed(2)}(元)
-节省：${receiptItems.save.toFixed(2)}(元)
+总计：${formatMoney(receiptItems.total)}(元)
+节省：${formatMoney(receiptItems.save)}(元)
 **********************`;
 };
 
 let buildTextString = (subCartItems) => {
-  let textString = subCartItems.map(subCartItem => {
+  return subCartItems.map(subCartItem => {
     let cartItem = subCartItem.cartItem;
-    return `名称：${cartItem.item.name}，数量：${cartItem.count + cartItem.item.unit}，单价：${cartItem.item.price.toFixed(2)}(元)，小计：${subCartItem.subTotal.toFixed(2)}(元)`;
-  });
+    return `名称：${cartItem.item.name}，\
+数量：${cartItem.count + cartItem.item.unit}，\
+单价：${formatMoney(cartItem.item.price)}(元)，\
+小计：${formatMoney(subCartItem.subTotal)}(元)`;
+  }).join('\n');
+};
 
-  return textString.join('\n');
+let formatMoney = (money) => {
+  return money.toFixed(2);
 };
