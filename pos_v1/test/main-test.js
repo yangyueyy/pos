@@ -1,11 +1,11 @@
 'use strict';
 describe('pos', () => {
-  let inputs;
+  let tags;
   const allItems = loadAllItems();
   const promotions = loadPromotions();
 
   beforeEach(() => {
-    inputs = [
+    tags = [
       'ITEM000001',
       'ITEM000001',
       'ITEM000001',
@@ -22,7 +22,7 @@ describe('pos', () => {
 
     spyOn(console, 'log');
 
-    printReceipt(inputs);
+    printReceipt(tags);
 
     const expectText = `***<没钱赚商店>收据***
 名称：雪碧，数量：5瓶，单价：3.00(元)，小计：12.00(元)
@@ -38,7 +38,7 @@ describe('pos', () => {
 
   it('print cartItems', () => {
 
-    const countItems = buildItems(inputs, allItems);
+    const cartItems = buildCartItems(tags, allItems);
 
     const correctItems = [
       {
@@ -69,15 +69,15 @@ describe('pos', () => {
         count: 3
       }
     ];
-    expect(countItems).toEqual(correctItems);
+    expect(cartItems).toEqual(correctItems);
   });
 
   it('print subCartItems', ()=> {
-    const countItems = buildItems(inputs, allItems);
-    const subCartItems = buildSubCartItems(countItems, promotions);
+    const cartItems = buildCartItems(tags, allItems);
+    const receiptItems = buildReceiptItems(cartItems, promotions);
 
 
-    const expectSubCartItems = [
+    const expectReceiptItems = [
       {
         cartItem: {
           item: {
@@ -88,8 +88,8 @@ describe('pos', () => {
           },
           count: 5
         },
-        saveSubTotal: 3,
-        subTotal: 12
+        saved: 3,
+        subtotal: 12
       },
       {
         cartItem: {
@@ -101,8 +101,8 @@ describe('pos', () => {
           },
           count: 2
         },
-        saveSubTotal: 0,
-        subTotal: 30
+        saved: 0,
+        subtotal: 30
       },
       {
         cartItem: {
@@ -114,20 +114,20 @@ describe('pos', () => {
           },
           count: 3
         },
-        saveSubTotal: 4.5,
-        subTotal: 9
+        saved: 4.5,
+        subtotal: 9
       }
     ];
-    expect(subCartItems).toEqual(expectSubCartItems);
+    expect(receiptItems).toEqual(expectReceiptItems);
   });
 
   it('print buildReceipt', () => {
-    const countItems = buildItems(inputs, allItems);
-    const subCartItems = buildSubCartItems(countItems, promotions);
-    const receiptItems = buildReceipt(subCartItems);
+    const cartItems = buildCartItems(tags, allItems);
+    const receiptItems = buildReceiptItems(cartItems, promotions);
+    const receipt = buildReceipt(receiptItems);
 
     const expectReceipt = {
-      subCartItems: [{
+      receiptItems: [{
         cartItem: {
           item: {
             barcode: 'ITEM000001',
@@ -137,8 +137,8 @@ describe('pos', () => {
           },
           count: 5
         },
-        saveSubTotal: 3,
-        subTotal: 12
+        saved: 3,
+        subtotal: 12
       },
         {
           cartItem: {
@@ -150,8 +150,8 @@ describe('pos', () => {
             },
             count: 2
           },
-          saveSubTotal: 0,
-          subTotal: 30
+          saved: 0,
+          subtotal: 30
         },
         {
           cartItem: {
@@ -163,13 +163,13 @@ describe('pos', () => {
             },
             count: 3
           },
-          saveSubTotal: 4.5,
-          subTotal: 9
+          saved: 4.5,
+          subtotal: 9
         }],
-      save: 7.5,
+      savedTotal: 7.5,
       total: 51
     };
 
-    expect(receiptItems).toEqual(expectReceipt);
+    expect(receipt).toEqual(expectReceipt);
   });
 });
